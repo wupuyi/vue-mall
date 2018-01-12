@@ -1,15 +1,19 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
+import Vuex from 'vuex'
+// import HelloWorld from '@/components/HelloWorld'
 
 Vue.use(Router)
+Vue.use(Vuex)
 
 export default new Router({
+  // 使用history模式
+  mode: 'history',
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
+      name: 'IndexPage',
+      component: IndexPage
     }
   ]
 })
