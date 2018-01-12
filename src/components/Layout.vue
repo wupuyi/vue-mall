@@ -15,7 +15,9 @@
             </div>
         </div>
         <div class="app-content">
+          <keep-alive>
             <router-view></router-view>
+          </keep-alive>
         </div>
         <div class="app-foot">
             <p>&copy; 2018 Puyi MIT</p>
@@ -34,7 +36,7 @@ export default {
 </script>
 
 
-<style scoped>
+<style>
     /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
    License: none (public domain)
@@ -67,6 +69,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
   line-height: 1;
+  min-width: 1300px;
 }
 ol, ul {
   list-style: none;
@@ -108,7 +111,7 @@ body {
   float: left;
 }
 .app-head-inner img {
-  width: 80px;
+  height: 80px;
   margin-top: 5px;
 }
 .head-nav {
