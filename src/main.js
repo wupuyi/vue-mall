@@ -4,7 +4,7 @@ import Vue from 'vue'
 // import App from './App'
 import Layout from './components/Layout'
 import router from './router'
-// import axios from './axios'
+// import axios from './axios '
 import VueResource from 'vue-resource'
 import 'normalize.css'
 
