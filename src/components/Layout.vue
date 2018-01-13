@@ -146,14 +146,14 @@ body {
   background: #ddd;
 }
 .button {
-  background: #4fc08d;
+  background: #0086f1;
   color: #fff;
   display: inline-block;
   padding: 10px 20px;
   cursor: pointer;
 }
 .button:hover {
-  background: #4fc08d;
+  background: #319be9;
 }
 .g-form {
 
