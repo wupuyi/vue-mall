@@ -20,40 +20,45 @@
             <h2>最新消息</h2>
             <ul>
               <li v-for="item in newsList">
-                <a :href="item.url">{{ item.title }}</a>
+                <a :href="item.url" class="new-item">{{ item.title }}</a>
               </li>
             </ul>
         </div>
         </div>
         <div class="index-right">
-        <slide-show :slides="slides" :inv="invTime"></slide-show>
-        <div class="index-board-list">
-          <div 
-            class="index-board-item"
-            v-for="(item, index) in boardList"
-            :class="[{'line-last' : index % 2 !== 0}, 'index-board-' + item.id]">
-            <div class="index-board-item-inner">
-              <h2>{{ item.title }}</h2>
-              <p>{{ item.description }}</p>
-              <div class="index-board-button">
-                <a href="" class="button">立即购买</a>
+          <!-- 轮播图组件 -->
+          <slide-show :slides="slides"></slide-show>
+          <div class="index-board-list">
+            <div 
+              class="index-board-item"
+              v-for="(item, index) in boardList"
+              :class="[{'line-last' : index % 2 !== 0}, 'index-board-' + item.id]">
+              <div class="index-board-item-inner">
+                <h2>{{ item.title }}</h2>
+                <p>{{ item.description }}</p>
+                <div class="index-board-button">
+                  <a href="" class="button">立即购买</a>
+                </div>
               </div>
             </div>
           </div>
-        </div>
         </div>
     </div>
 </template>
 
 <script>
+import slideShow from '../components/slideShow'
 export default {
-
+    components: {
+      slideShow
+    },
     // 生命周期函数 created
     created: function() {
-      this.$http.get('getList')
-      .then(function(data) {
-        console.log(data);
-      }, function(err) {
+      this.$http.get('api/getNewsList')
+      // 箭头函数解决this指向问题
+      .then((res) => {
+        this.newsList = res.data
+      }, (err) => {
         console.log(err);
       })
       // axios.get('getList')
@@ -66,6 +71,31 @@ export default {
     },
     data () {
         return {
+          invTime: 2000,
+          slides: [
+            {
+              // require引入图片，webpack中图片作为一个模块
+              // js引入的图片路径都要用require
+              src: require('../assets/slideShow/pic1.jpg'),
+              title: 'xxx1',
+              href: 'detail/analysis'
+            },
+            {
+              src: require('../assets/slideShow/pic2.jpg'),
+              title: 'xxx2',
+              href: 'detail/count'
+            },
+            {
+              src: require('../assets/slideShow/pic3.jpg'),
+              title: 'xxx3',
+              href: 'http://xxx.xxx.com'
+            },
+            {
+              src: require('../assets/slideShow/pic4.jpg'),
+              title: 'xxx4',
+              href: 'detail/forecast'
+            }
+          ],
           boardList: [
             {
               title: '开放产品',
@@ -96,25 +126,7 @@ export default {
               saleout: false
             }
           ],
-          newsList:[
-             {
-                title: '数据统计',
-                url: 'http://starcraft.com'
-              },
-              {
-                title: '数据预测',
-                url: 'http://warcraft.com'
-              },
-              {
-                title: '流量分析',
-                url: 'http://overwatch.com',
-                hot: true
-              },
-              {
-                title: '广告发布',
-                url: 'http://hearstone.com'
-              }
-          ],
+          newsList:[],
           productList: {
             pc: {
             title: 'PC产品',
