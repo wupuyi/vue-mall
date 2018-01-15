@@ -27,7 +27,7 @@
         </div>
         <div class="index-right">
           <!-- 轮播图组件 -->
-          <slide-show :slides="slides"></slide-show>
+          <slide-show :slides="slides" :inv="slideSpeed"></slide-show>
           <div class="index-board-list">
             <div 
               class="index-board-item"
@@ -71,28 +71,28 @@ export default {
     },
     data () {
         return {
-          invTime: 2000,
+          slideSpeed: 2000,
           slides: [
             {
               // require引入图片，webpack中图片作为一个模块
               // js引入的图片路径都要用require
               src: require('../assets/slideShow/pic1.jpg'),
-              title: 'xxx1',
+              title: 'iPhone X " Hello, 未来 "',
               href: 'detail/analysis'
             },
             {
               src: require('../assets/slideShow/pic2.jpg'),
-              title: 'xxx2',
+              title: 'iPad Pro " 不只能做到，还能做的更好！"',
               href: 'detail/count'
             },
             {
               src: require('../assets/slideShow/pic3.jpg'),
-              title: 'xxx3',
+              title: 'iPone 8 " 美在智慧 "',
               href: 'http://xxx.xxx.com'
             },
             {
               src: require('../assets/slideShow/pic4.jpg'),
-              title: 'xxx4',
+              title: '小米 6 " 变焦双摄，拍人更美 "',
               href: 'detail/forecast'
             }
           ],
