@@ -5,11 +5,24 @@
                 <img src="../assets/white.png" alt="logo">
                 <div class="head-nav">
                     <ul class="nav-list">
-                        <li>登陆</li>
-                        <li class="nav-pile">|</li>
-                        <li>注册</li>
-                        <li class="nav-pile">|</li>
-                        <li>关于</li>
+                      <li> {{ username }}</li>
+                      <li 
+                        v-if="username!== ''" 
+                        class="nav-pile">|</li>
+                      <li 
+                        v-if="username!== ''" 
+                        @click="quit">退出</li>
+                      <li 
+                        v-if="username=== ''" 
+                        @click="logClick">登录</li>
+                      <li class="nav-pile">|</li>
+                      <li 
+                        v-if="username=== ''" 
+                        @click="regClick">注册</li>
+                      <li 
+                        v-if="username=== ''" 
+                        class="nav-pile">|</li>
+                      <li @click="aboutClick">关于</li>
                     </ul>
                 </div>
             </div>
@@ -22,15 +35,72 @@
         <div class="app-foot">
             <p>&copy; 2018 Puyi MIT</p>
         </div>
+        <my-dialog 
+          :isShow="isShowAboutDialog" 
+          @on-close="closeDialog('isShowAboutDialog')">
+          <div class="about-msg">
+            <img src="../assets/logo.png">
+            <div class="about-msg-content">
+              <h2>This is my Answer.</h2>
+              <p>若烹小鲜</p>
+            </div>
+          </div>
+        </my-dialog>
+
+        <my-dialog 
+          :isShow="isShowLogDialog" 
+          @on-close="closeDialog('isShowLogDialog')">
+          <log-form @has-log="onSuccessLog"></log-form>
+        </my-dialog>
+
+        <my-dialog 
+          :isShow="isShowRegDialog" 
+          @on-close="closeDialog('isShowRegDialog')">
+          <reg-form></reg-form>
+        </my-dialog>
     </div>
 </template>
 
 <script>
+import Dialog from './dialog'
+import LogForm from './logForm'
+import RegForm from './regForm'
 export default {
+  components: {
+    MyDialog: Dialog,
+    LogForm,
+    RegForm
+  },
   data() {
-      return {
-
+    return {
+      isShowAboutDialog: false,
+        isShowLogDialog: false,
+        isShowRegDialog: false,
+        username: ''
       }
+  },
+  methods: {
+    aboutClick () {
+      this.isShowAboutDialog = true
+    },
+    logClick () {
+      this.isShowLogDialog = true
+    },
+    regClick () {
+      this.isShowRegDialog = true
+    },
+    closeDialog (attr) {
+      this[attr] = false
+      // this.isShowDialog = false;
+    },
+    onSuccessLog (data) {
+      console.log(data)
+      this.closeDialog('isShowLogDialog')
+      this.username = data.username
+    },
+    quit () {
+      console.log(111);
+    }
   }
 }
 </script>
@@ -184,5 +254,19 @@ body {
   color: red;
   padding-left: 15px;
 }
+.about-msg {
+  display: flex;
+}
+.about-msg-content {
+  padding: 36px 0;
+}
+
+.about-msg-content h2 {
+  font-size: 36px;
+}
+.about-msg-content p {
+  margin-top: 20px;
+  font-size: 22px;
+} 
 </style>
 
