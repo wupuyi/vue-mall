@@ -27,7 +27,10 @@
         </div>
         <div class="index-right">
           <!-- 轮播图组件 -->
-          <slide-show :slides="slides" :inv="slideSpeed"></slide-show>
+          <slide-show 
+            :slides="slides" 
+            :inv="slideSpeed" 
+            @onchange="doSomeThingOnSlideChange"></slide-show>
           <div class="index-board-list">
             <div 
               class="index-board-item"
@@ -68,6 +71,11 @@ export default {
       //   .catch(function (error) {
       //     console.log(error);
       //   });
+    },
+    methods: {
+      doSomeThingOnSlideChange () {
+        // console.log('doSomeThingOnSlideChange run!')
+      }
     },
     data () {
         return {
