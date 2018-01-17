@@ -24,6 +24,7 @@ export default new Router({
     {
       path: '/detail',
       component: DetailPage,
+      redirect: '/detail/analysis',
       // 配置自路由
       children: [
         {

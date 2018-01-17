@@ -2,12 +2,19 @@
   <div class="detail-wrap">
     <div class="detail-left">
       <div class="product-board">
-        <img src="../assets/images/1.png">
+        <img :src="productIcon">
         <ul>
-          <li
+          <!-- <li
             v-for="item in products">
               {{ item.name }}
-          </li>
+          </li> -->
+          <router-link
+            v-for="item in products"
+            :to="{ path: item.path }"
+            tag="li"
+            active-class="active">
+            {{ item.name }}  
+          </router-link>
         </ul>
       </div>
     </div>
@@ -56,6 +63,7 @@ export default {
   },
   computed: {
     productIcon () {
+      // console.log(this.$route.path);
       return this.imgMap[this.$route.path]
     }
   }
