@@ -1,6 +1,6 @@
 # vue-mall
 
-> A Vue.js project
+> vue 2.0 商城实战代码
 
 ## Build Setup
 
