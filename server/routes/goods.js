@@ -88,9 +88,10 @@ router.get('/', function (req, res, next) {
 
 // 加入到购物车
 router.post('/addCart', function (req, res, next) {
-  let userId = '100000077'
-  let productId = req.body.productId
+  var userId = '100000077'
+  var productId = req.body.productId
   var User = require('../models/user')
+
   User.findOne({userId: userId}, function (err, userDoc) {
     if (err) {
       res.json({
@@ -98,9 +99,9 @@ router.post('/addCart', function (req, res, next) {
         msg: err.message
       })
     } else {
-      // console.log('userDoc:' + userDoc)
+      console.log('userDoc:' + userDoc)
       if (userDoc) {
-        var goodsItem = ''
+        let goodsItem = ''
         userDoc.cartList.forEach(function (item) {
           if (item.productId === productId) {
             goodsItem = item
@@ -131,10 +132,8 @@ router.post('/addCart', function (req, res, next) {
               })
             } else {
               if (doc) {
-                console.log(typeof doc)
-                doc.productNum = 1
                 doc.checked = 1
-                console.log(typeof doc)
+                doc.productNum = 1
                 userDoc.cartList.push(doc)
                 userDoc.save(function (err2, doc2) {
                   if (err2) {
@@ -159,4 +158,4 @@ router.post('/addCart', function (req, res, next) {
   })
 })
 
-module.exports = router
+module.exports = router;
