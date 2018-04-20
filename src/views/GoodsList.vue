@@ -9,7 +9,11 @@
         <div class="filter-nav">
           <span class="sortby">Sort by:</span>
           <a href="javascript:void(0)" class="default cur">Default</a>
-          <a href="javascript:void(0)" class="price" v-bind:class="{'sort-up':sortFlag}" @click="sortGoods()">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
+          <a
+            href="javascript:void(0)"
+            class="price"
+            v-bind:class="{'sort-up':sortFlag}"
+            @click="sortGoods()">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
           <a href="javascript:void(0)" class="filterby stopPop" @click.stop="showFilterPop">Filter by</a>
         </div>
         <div class="accessory-result">
@@ -48,7 +52,11 @@
                     <div class="name">{{item.productName}}</div>
                     <div class="price">{{item.salePrice}}</div>
                     <div class="btn-area">
-                      <a href="javascript:;" class="btn btn--m">加入购物车</a>
+                      <a
+                        href="javascript:;"
+                        class="btn btn--m"
+                        @click="addCart(item.productId)"
+                      >加入购物车</a>
                     </div>
                   </div>
                 </li>
@@ -57,14 +65,15 @@
             <div class="view-more-normal"
                   v-infinite-scroll="loadMore"
                   infinite-scroll-disabled="busy"
-                  infinite-scroll-distance="20">
+                  infinite-scroll-distance="20"
+            >
               <img src="../assets/loading-spinning-bubbles.svg" v-show="loading">
             </div>
           </div>
         </div>
       </div>
     </div>
-    <modal v-bind:mdShow="mdShow" v-on:close="closeModal">
+    <!-- <modal v-bind:mdShow="mdShow" v-on:close="closeModal">
         <p slot="message">
             请先登录,否则无法加入到购物车中!
         </p>
@@ -83,7 +92,7 @@
         <a class="btn btn--m" href="javascript:;" @click="mdShowCart = false">继续购物</a>
         <router-link class="btn btn--m btn--red" href="javascript:;" to="/cart">查看购物车</router-link>
       </div>
-    </modal>
+    </modal> -->
     <div class="md-overlay" v-show="overLayFlag" @click.stop="closePop"></div>
     <nav-footer></nav-footer>
   </div>
@@ -100,9 +109,19 @@ export default {
   data () {
     return {
       goodsList: [],
+      // 1代表升序
+      sortFlag: true,
+      page: 1,
+      pageSize: 8,
+      busy: true,
+      loading: false,
       priceFilter: [
         {
           startPrice: '0.00',
+          endPrice: '100.00'
+        },
+        {
+          startPrice: '100.00',
           endPrice: '500.00'
         },
         {
@@ -111,7 +130,7 @@ export default {
         },
         {
           startPrice: '1000.00',
-          endPrice: '2000.00'
+          endPrice: '5000.00'
         }
       ],
       priceCheckded: 'all',
@@ -128,23 +147,82 @@ export default {
     this.getGoodsList()
   },
   methods: {
-    getGoodsList () {
-      axios.get('/goods').then((result) => {
+    getGoodsList (flag) {
+      // 获取商品列表
+      let param = {
+        page: this.page,
+        pageSize: this.pageSize,
+        // 1为升序，-1为降序
+        sort: this.sortFlag ? 1 : -1,
+        priceLevel: this.priceCheckded
+      }
+      this.loading = true
+      axios.get('/goods', {
+        params: param
+      }).then((result) => {
+        this.loading = false
         let res = result.data
-        this.goodsList = res.result.list
+        if (res.status === '0') {
+          if (flag) {
+            this.goodsList = this.goodsList.concat(res.result.list)
+            if (res.result.count === 0) {
+              this.busy = true
+            } else {
+              this.busy = false
+            }
+          } else {
+            this.goodsList = res.result.list
+            this.busy = false
+          }
+        } else {
+          this.goodsList = []
+        }
       })
     },
+    sortGoods () {
+      // 商品排序
+      alert(111111)
+      this.sortFlag = !this.sortFlag
+      this.page = 1
+      this.getGoodsList()
+    },
+    loadMore () {
+      // 鼠标滚动时调用的方法
+      this.busy = true
+      setTimeout(() => {
+        this.page++
+        this.getGoodsList(true)
+      }, 500)
+    },
     showFilterPop () {
+      // 响应式布局，移动端是显示弹出层
       this.filterBy = true
       this.overLayFlag = true
     },
     closePop () {
+      // 关闭弹出层
       this.filterBy = false
       this.overLayFlag = false
     },
     setPriceFilter (index) {
+      // 设置价格过滤
       this.priceCheckded = index
+      this.page = 1
+      this.getGoodsList()
       this.closePop()
+    },
+    addCart (productId) {
+      axios.post('/goods/addCart', {
+        productId: productId
+      }).then((res) => {
+        var res = res.data
+        console.log(res)
+        if (res.status === '0') {
+          alert('加入成功')
+        } else {
+          alert('msg:' + res.msg)
+        }
+      })
     }
   }
 }
