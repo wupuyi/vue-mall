@@ -13,7 +13,12 @@
             href="javascript:void(0)"
             class="price"
             v-bind:class="{'sort-up':sortFlag}"
-            @click="sortGoods()">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
+            @click="sortGoods()"
+          >Price
+            <svg class="icon icon-arrow-short" :class="{'sort-up': sortFlag}">
+              <use xlink:href="#icon-arrow-short"></use>
+            </svg>
+          </a>
           <a href="javascript:void(0)" class="filterby stopPop" @click.stop="showFilterPop">Filter by</a>
         </div>
         <div class="accessory-result">
@@ -73,7 +78,7 @@
         </div>
       </div>
     </div>
-    <!-- <modal v-bind:mdShow="mdShow" v-on:close="closeModal">
+    <modal v-bind:mdShow="mdShow" v-on:close="closeModal">
         <p slot="message">
             请先登录,否则无法加入到购物车中!
         </p>
@@ -92,7 +97,7 @@
         <a class="btn btn--m" href="javascript:;" @click="mdShowCart = false">继续购物</a>
         <router-link class="btn btn--m btn--red" href="javascript:;" to="/cart">查看购物车</router-link>
       </div>
-    </modal> -->
+    </modal>
     <div class="md-overlay" v-show="overLayFlag" @click.stop="closePop"></div>
     <nav-footer></nav-footer>
   </div>
@@ -104,6 +109,7 @@ import '../assets/css/product.css'
 import NavHeader from '@/components/NavHeader'
 import NavFooter from '@/components/NavFooter'
 import NavBread from '@/components/NavBread'
+import Modal from '@/components/Modal'
 import axios from 'axios'
 export default {
   data () {
@@ -115,6 +121,8 @@ export default {
       pageSize: 8,
       busy: true,
       loading: false,
+      mdShow: false,
+      mdShowCart: false,
       priceFilter: [
         {
           startPrice: '0.00',
@@ -141,7 +149,8 @@ export default {
   components: {
     NavHeader,
     NavFooter,
-    NavBread
+    NavBread,
+    Modal
   },
   mounted () {
     this.getGoodsList()
@@ -157,7 +166,7 @@ export default {
         priceLevel: this.priceCheckded
       }
       this.loading = true
-      axios.get('/goods', {
+      axios.get('/goods/list', {
         params: param
       }).then((result) => {
         this.loading = false
@@ -181,7 +190,6 @@ export default {
     },
     sortGoods () {
       // 商品排序
-      alert(111111)
       this.sortFlag = !this.sortFlag
       this.page = 1
       this.getGoodsList()
@@ -218,11 +226,16 @@ export default {
         var res = result.data
         console.log(res)
         if (res.status === '0') {
-          alert('加入成功')
+          // 打开弹出框
+          this.mdShowCart = true
         } else {
-          alert('msg:' + res.msg)
+          // 打开弹出框
+          this.mdShow = true
         }
       })
+    },
+    closeModal () {
+      this.mdShow = false
     }
   }
 }

@@ -29,7 +29,7 @@
           <div class="navbar-right-container" style="display: flex;">
             <div class="navbar-menu-container">
               <span class="navbar-link" v-text="nickName" v-if="nickName"></span>
-              <a href="javascript:void(0)" class="navbar-link" @click="loginModalFlag=true" v-if="!nickName">Login</a>
+              <a href="javascript:void(0)" class="navbar-link" @click="loginModelFlag=true" v-if="!nickName">Login</a>
               <a href="javascript:void(0)" class="navbar-link" @click="logOut" v-else>Logout</a>
               <div class="navbar-cart-container">
                 <span class="navbar-cart-count" v-text="cartCount" v-if="cartCount"></span>
@@ -42,11 +42,11 @@
             </div>
           </div>
       </div>
-      <div class="md-modal modal-msg md-modal-transition" v-bind:class="{'md-show':loginModalFlag}">
+      <div class="md-modal modal-msg md-modal-transition" :class="{'md-show': loginModelFlag}">
         <div class="md-modal-inner">
           <div class="md-top">
             <div class="md-title">Login in</div>
-            <button class="md-close" @click="loginModalFlag=false">Close</button>
+            <button class="md-close" @click="loginModelFlag=false">Close</button>
           </div>
           <div class="md-content">
             <div class="confirm-tips">
@@ -56,11 +56,27 @@
               <ul>
                 <li class="regi_form_input">
                   <i class="icon IconPeople"></i>
-                  <input type="text" tabindex="1" name="loginname" v-model="userName" class="regi_login_input regi_login_input_left" placeholder="User Name" data-type="loginname">
+                  <input
+                    type="text"
+                    tabindex="1"
+                    name="loginname"
+                    v-model="userName"
+                    class="regi_login_input regi_login_input_left"
+                    placeholder="User Name"
+                    data-type="loginname"
+                  >
                 </li>
                 <li class="regi_form_input noMargin">
                   <i class="icon IconPwd"></i>
-                  <input type="password" tabindex="2"  name="password" v-model="userPwd" class="regi_login_input regi_login_input_left login-input-no input_text" placeholder="Password" @keyup.enter="login">
+                  <input
+                    type="password"
+                    tabindex="2"
+                    name="password"
+                    v-model="userPwd"
+                    class="regi_login_input regi_login_input_left login-input-no input_text"
+                    placeholder="Password"
+                    @keyup.enter="login"
+                  >
                 </li>
               </ul>
             </div>
@@ -70,13 +86,66 @@
           </div>
         </div>
       </div>
-      <div class="md-overlay" v-if="loginModalFlag" @click="loginModalFlag=false"></div>
+      <div class="md-overlay" v-if="loginModelFlag" @click="loginModelFlag=false"></div>
   </header>
 </template>
 
 <script>
 import '../assets/css/login.css'
+import axios from 'axios'
 export default {
+  data () {
+    return {
+      userName: '',
+      userPwd: '',
+      errorTip: false,
+      loginModelFlag: false,
+      nickName: '',
+      cartCount: ''
+
+    }
+  },
+  mounted () {
+    this.checkLogin()
+  },
+  methods: {
+    checkLogin () {
+      axios.get('/users/checkLogin').then((response) => {
+        let res = response.data
+        if (res.status === '0') {
+          this.nickName = res.result
+        }
+      })
+    },
+    login () {
+      if (!this.userName || !this.userPwd) {
+        this.errorTip = true
+        return
+      }
+      axios.post('/users/login', {
+        userName: this.userName,
+        userPwd: this.userPwd
+      }).then((response) => {
+        let res = response.data
+        if (res.status === '0') {
+          this.errorTip = false
+          this.loginModelFlag = false
+          this.nickName = res.result.userName
+          // to-do
+        } else {
+          this.errorTip = true
+        }
+      })
+    },
+    logOut () {
+      axios.post('/users/logout').then((response) => {
+        let res = response.data
+        if (res.status === '0') {
+          this.nickName = ''
+        }
+      })
+    }
+  }
 }
 </script>
 

@@ -22,6 +22,28 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 拦截
+app.use(function (req, res, next) {
+  // 拿cookie
+  if (req.cookies.userId) {
+    next()
+  } else {
+    // req.originalUrl 获取的是当前的URL
+    // /goods/list 后面会跟着参数，所以用indexOf判断
+    // req.originalUrl.indexOf('/goods/list') > -1
+    // req.path可以拿到不带参数的内容
+    if (req.originalUrl === '/users/login' || req.originalUrl === '/users/logout' || req.path === '/goods/list') {
+      next()
+    } else {
+      res.json({
+        status: '10001',
+        msg: '当前未登录',
+        result: ''
+      })
+    }
+  }
+})
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/goods', goodsRouter);
