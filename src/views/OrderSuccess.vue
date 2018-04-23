@@ -41,7 +41,6 @@
 import NavHeader from './../components/NavHeader'
 import NavFooter from './../components/NavFooter'
 import NavBread from './../components/NavBread'
-import {currency} from './../util/currency'
 import axios from 'axios'
 export default{
 data(){
@@ -55,24 +54,21 @@ components:{
   NavFooter,
   NavBread
 },
-filters:{
-  currency:currency
-},
 mounted(){
-  var orderId = this.$route.query.orderId;
-  console.log("orderId:"+orderId);
+  var orderId = this.$route.query.orderId
+  console.log("orderId:"+orderId)
   if(!orderId){
-    return;
+    return
   }
   axios.get("/users/orderDetail",{
     params:{
       orderId:orderId
     }
   }).then((response)=>{
-    let res = response.data;
+    let res = response.data
     if(res.status=='0'){
-        this.orderId = orderId;
-        this.orderTotal = res.result.orderTotal;
+        this.orderId = orderId
+        this.orderTotal = res.result.orderTotal
     }
   })
 }
