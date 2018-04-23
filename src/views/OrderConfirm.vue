@@ -55,7 +55,11 @@
               </ul>
             </div>
             <ul class="cart-item-list">
-              <li v-for="item in cartList" v-if="item.checked=='1'">
+              <li
+                v-for="(item, index) in cartList"
+                v-if="item.checked=='1'"
+                :key="index"
+              >
                 <div class="cart-tab-1">
                   <div class="cart-item-pic">
                     <img v-lazy="'/static/'+item.productImage" :alt="item.productName">
@@ -66,7 +70,7 @@
                   </div>
                 </div>
                 <div class="cart-tab-2">
-                  <div class="item-price">{{item.salePrice|currency('$')}}</div>
+                  <div class="item-price">{{item.salePrice|currency('￥')}}</div>
                 </div>
                 <div class="cart-tab-3">
                   <div class="item-quantity">
@@ -79,7 +83,7 @@
                   </div>
                 </div>
                 <div class="cart-tab-4">
-                  <div class="item-price-total">{{(item.salePrice*item.productNum)|currency('$')}}</div>
+                  <div class="item-price-total">{{(item.salePrice*item.productNum)|currency('￥')}}</div>
                 </div>
               </li>
             </ul>
@@ -92,23 +96,23 @@
             <ul>
               <li>
                 <span>Item subtotal:</span>
-                <span>{{subTotal|currency('$')}}</span>
+                <span>{{subTotal|currency('￥')}}</span>
               </li>
               <li>
                 <span>Shipping:</span>
-                <span>{{shipping|currency('$')}}</span>
+                <span>{{shipping|currency('￥')}}</span>
               </li>
               <li>
                 <span>Discount:</span>
-                <span>{{discount|currency('$')}}</span>
+                <span>{{discount|currency('￥')}}</span>
               </li>
               <li>
                 <span>Tax:</span>
-                <span>{{tax|currency('$')}}</span>
+                <span>{{tax|currency('￥')}}</span>
               </li>
               <li class="order-total-price">
                 <span>Order total:</span>
-                <span>{{orderTotal|currency('$')}}</span>
+                <span>{{orderTotal|currency('￥')}}</span>
               </li>
             </ul>
           </div>
@@ -116,7 +120,10 @@
 
         <div class="order-foot-wrap">
           <div class="prev-btn-wrap">
-            <router-link class="btn btn--m" to="/address">Previous</router-link>
+            <router-link
+              class="btn btn--m"
+              to="/address"
+            >Previous</router-link>
           </div>
           <div class="next-btn-wrap">
             <button class="btn btn--m btn--red" @click="payMent">Proceed to payment</button>
@@ -128,62 +135,67 @@
   </div>
 </template>
 <script>
-  import NavHeader from './../components/NavHeader'
-  import NavFooter from './../components/NavFooter'
-  import NavBread from './../components/NavBread'
-  import {currency} from './../util/currency'
-  import axios from 'axios'
-  export default{
-      data(){
-          return{
-              shipping:100,
-              discount:200,
-              tax:400,
-              subTotal:0,
-              orderTotal:0,
-              cartList:[]
-          }
-      },
-      mounted(){
-          this.init();
-      },
-      components:{
-        NavHeader,
-        NavFooter,
-        NavBread
-      },
-      filters:{
-        currency:currency
-      },
-      methods:{
-         init(){
-            axios.get("/users/cartList").then((response)=>{
-                let res = response.data;
-                this.cartList = res.result;
+import NavHeader from './../components/NavHeader'
+import NavFooter from './../components/NavFooter'
+import NavBread from './../components/NavBread'
+import { currency } from './../util/currency'
+import axios from 'axios'
+export default {
+  data () {
+    return {
+      shipping: 100,
+      discount: 200,
+      tax: 400,
+      subTotal: 0,
+      orderTotal: 0,
+      cartList: []
+    }
+  },
+  mounted () {
+    this.init()
+  },
+  components: {
+    NavHeader,
+    NavFooter,
+    NavBread
+  },
+  filters: {
+    currency: currency
+  },
+  methods: {
+    init () {
+      // 初始化
+      axios.get('/users/cartList').then(response => {
+        let res = response.data
+        this.cartList = res.result
 
-                this.cartList.forEach((item)=>{
-                    if(item.checked=='1'){
-                        this.subTotal += item.salePrice*item.productNum;
-                    }
-                });
-
-                this.orderTotal = this.subTotal+this.shipping-this.discount+this.tax;
-            });
-         },
-          payMent(){
-              var addressId = this.$route.query.addressId;
-              axios.post("/users/payMent",{
-                addressId:addressId,
-                orderTotal:this.orderTotal
-              }).then((response)=>{
-                  let res = response.data;
-                  if(res.status=="0"){
-                      this.$router.push({
-                          path:'/orderSuccess?orderId='+res.result.orderId
-                      })
-                  }
-              })
+        this.cartList.forEach(item => {
+          if (item.checked === '1') {
+            this.subTotal += item.salePrice * item.productNum
           }
-      }
+        })
+
+        this.orderTotal =
+          this.subTotal + this.shipping - this.discount + this.tax
+      })
+    },
+    payMent () {
+      // 支付
+      var addressId = this.$route.query.addressId
+      axios
+        .post('/users/payMent', {
+          addressId: addressId,
+          orderTotal: this.orderTotal
+        })
+        .then(response => {
+          let res = response.data
+          if (res.status === '0') {
+            this.$router.push({
+              path: '/orderSuccess?orderId=' + res.result.orderId
+            })
+          }
+        })
+    }
   }
+}
 </script>
