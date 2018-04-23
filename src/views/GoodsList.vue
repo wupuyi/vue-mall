@@ -228,6 +228,7 @@ export default {
         if (res.status === '0') {
           // 打开弹出框
           this.mdShowCart = true
+          this.$store.commit('updateCartCount', 1)
         } else {
           // 打开弹出框
           this.mdShow = true
