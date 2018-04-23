@@ -257,9 +257,6 @@ export default {
         }
       })
     },
-    // 登出
-    checkOut () {
-    },
     // 编辑购物车
     editCart (flag, item) {
       if (flag === 'add') {
